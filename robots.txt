@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-Sitemap: https://your-site.netlify.app/sitemap.xml
+Sitemap: https://kinohdpremium.netlify.app/sitemap.xml
 
 # Разрешаем индексацию всех страниц
 Allow: /index.html
