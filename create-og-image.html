@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Create OG Image</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #111;
+        }
+        #canvas {
+            border: 2px solid #333;
+        }
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+        }
+        button {
+            background: #e50914;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #f40612;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="1200" height="630"></canvas>
+    <div class="controls">
+        <h3>OG Image Generator</h3>
+        <p>Размер: 1200x630px</p>
+        <button onclick="downloadImage()">Скачать изображение</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Градиентный фон
+        const gradient = ctx.createLinearGradient(0, 0, 1200, 630);
+        gradient.addColorStop(0, '#1a1a2e');
+        gradient.addColorStop(0.5, '#16213e');
+        gradient.addColorStop(1, '#0f3460');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 1200, 630);
+
+        // Добавляем паттерн из кругов
+        ctx.fillStyle = 'rgba(229, 9, 20, 0.1)';
+        for (let i = 0; i < 20; i++) {
+            const x = Math.random() * 1200;
+            const y = Math.random() * 630;
+            const radius = Math.random() * 100 + 50;
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Заголовок
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 90px Inter, Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('KINO HD PREMIUM', 600, 250);
+
+        // Подзаголовок
+        ctx.fillStyle = '#e50914';
+        ctx.font = 'bold 48px Inter, Arial, sans-serif';
+        ctx.fillText('Смотри фильмы онлайн', 600, 340);
+
+        // Описание
+        ctx.fillStyle = '#cccccc';
+        ctx.font = '32px Inter, Arial, sans-serif';
+        ctx.fillText('Огромная база фильмов и сериалов в HD качестве', 600, 420);
+        ctx.fillText('Бесплатно • Без регистрации • Новинки каждый день', 600, 470);
+
+        // Иконка кинопленки (декоративный элемент)
+        ctx.fillStyle = '#e50914';
+        ctx.fillRect(100, 520, 60, 60);
+        ctx.fillRect(1040, 520, 60, 60);
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 40px Arial';
+        ctx.fillText('🎬', 130, 565);
+        ctx.fillText('🎬', 1070, 565);
+
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.download = 'og-image.jpg';
+            link.href = canvas.toDataURL('image/jpeg', 0.95);
+            link.click();
+        }
+
+        // Автоматически скачать при загрузке
+        setTimeout(() => {
+            console.log('Изображение готово! Нажмите кнопку для скачивания.');
+        }, 100);
+    </script>
+</body>
+</html>
