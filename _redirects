@@ -1,0 +1,9 @@
+# Redirect www to non-www
+https://www.kinohdpremium.netlify.app/* https://kinohdpremium.netlify.app/:splat 301!
+
+# Pretty URLs (опционально)
+/movie/:id /movie-details.html?id=:id 200
+/search /search.html 200
+
+# 404 page
+/* /index.html 200

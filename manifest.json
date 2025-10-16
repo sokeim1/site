@@ -1,0 +1,21 @@
+{
+  "name": "KINO HD PREMIUM - Фильмы онлайн",
+  "short_name": "KINO HD",
+  "description": "Смотреть фильмы и сериалы онлайн бесплатно в HD качестве",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#e50914",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["entertainment", "video"],
+  "lang": "ru",
+  "dir": "ltr"
+}

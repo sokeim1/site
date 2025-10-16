@@ -4,6 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KINO HD PREMIUM - Детали фильма</title>
+    <meta name="description" content="Смотреть фильм онлайн бесплатно в HD качестве на KINO HD PREMIUM">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="video.movie">
+    <meta property="og:site_name" content="KINO HD PREMIUM">
+    
+    <!-- Schema.org для Breadcrumbs -->
+    <script type="application/ld+json" id="breadcrumbSchema">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": "https://kinohdpremium.netlify.app/"
+      },{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Фильм"
+      }]
+    }
+    </script>
+    
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/details.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -33,6 +57,13 @@
     </header>
 
     <main class="main">
+        <!-- Breadcrumbs для SEO -->
+        <nav class="breadcrumbs" style="padding: 15px 20px; background: rgba(255,255,255,0.05); margin-bottom: 20px;">
+            <a href="index.html" style="color: #999; text-decoration: none;">Главная</a>
+            <span style="color: #666; margin: 0 10px;">/</span>
+            <span id="breadcrumbTitle" style="color: #fff;">Фильм</span>
+        </nav>
+        
         <div class="loading" id="loading">
             <div class="spinner"></div>
             <p>Загрузка информации о фильме...</p>
