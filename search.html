@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineHub - Поиск фильмов</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/search.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="logo">
+                    <h1>CineHub</h1>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">Главная</a>
+                    <a href="search.html" class="nav-link active">Поиск</a>
+                    <a href="#" class="nav-link">Жанры</a>
+                    <a href="#" class="nav-link">Топ фильмы</a>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="headerSearchInput" placeholder="Поиск фильмов..." class="search-input">
+                    <button class="search-btn" onclick="searchFromHeader()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main">
+        <section class="search-hero">
+            <div class="container">
+                <h1>Поиск фильмов и сериалов</h1>
+                <div class="main-search-container">
+                    <input type="text" id="mainSearchInput" placeholder="Введите название фильма или сериала..." class="main-search-input">
+                    <button class="main-search-btn" onclick="performSearch()">
+                        <i class="fas fa-search"></i>
+                        Найти
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="search-filters">
+            <div class="container">
+                <div class="filters-header">
+                    <h3>Фильтры</h3>
+                    <button class="toggle-filters" onclick="toggleFilters()">
+                        <i class="fas fa-filter"></i>
+                        <span>Показать фильтры</span>
+                    </button>
+                </div>
+                
+                <div class="filters-content" id="filtersContent">
+                    <div class="filter-group">
+                        <label>Тип контента</label>
+                        <div class="filter-options">
+                            <label class="filter-option">
+                                <input type="radio" name="type" value="" checked>
+                                <span>Все</span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="radio" name="type" value="movie">
+                                <span>Фильмы</span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="radio" name="type" value="serial">
+                                <span>Сериалы</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Год выпуска</label>
+                        <div class="year-range">
+                            <input type="number" id="yearFrom" placeholder="От" min="1900" max="2024">
+                            <span>—</span>
+                            <input type="number" id="yearTo" placeholder="До" min="1900" max="2024">
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Жанры</label>
+                        <div class="genres-container" id="genresContainer">
+                            <!-- Жанры будут загружены через JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Страны</label>
+                        <div class="countries-container" id="countriesContainer">
+                            <!-- Страны будут загружены через JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button class="apply-filters-btn" onclick="applyFilters()">
+                            Применить фильтры
+                        </button>
+                        <button class="reset-filters-btn" onclick="resetFilters()">
+                            Сбросить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="search-results">
+            <div class="container">
+                <div class="results-header" id="resultsHeader" style="display: none;">
+                    <h2 id="resultsTitle">Результаты поиска</h2>
+                    <p id="resultsCount"></p>
+                </div>
+
+                <div class="no-search" id="noSearch">
+                    <div class="no-search-content">
+                        <i class="fas fa-search"></i>
+                        <h3>Начните поиск</h3>
+                        <p>Введите название фильма или сериала в поле поиска выше</p>
+                    </div>
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p id="loadingText">Поиск фильмов...</p>
+                    <div class="search-progress" id="searchProgress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <p class="progress-text" id="progressText">Сканирование базы данных...</p>
+                    </div>
+                </div>
+
+                <div class="movies-grid" id="moviesGrid">
+                    <!-- Результаты поиска будут отображены здесь -->
+                </div>
+
+                <div class="no-results" id="noResults" style="display: none;">
+                    <div class="no-results-content">
+                        <i class="fas fa-film"></i>
+                        <h3>Ничего не найдено</h3>
+                        <p>Попробуйте изменить параметры поиска или использовать другие ключевые слова</p>
+                    </div>
+                </div>
+
+                <div class="load-more-container">
+                    <button class="load-more-btn" id="loadMoreBtn" onclick="loadMoreResults()" style="display: none;">
+                        Загрузить ещё
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>CineHub</h3>
+                    <p>Ваш путеводитель в мире кино</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Навигация</h4>
+                    <ul>
+                        <li><a href="index.html">Главная</a></li>
+                        <li><a href="search.html">Поиск</a></li>
+                        <li><a href="#">Жанры</a></li>
+                        <li><a href="#">Топ фильмы</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="#">О проекте</a></li>
+                        <li><a href="#">Контакты</a></li>
+                        <li><a href="#">Политика конфиденциальности</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 CineHub. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Предварительно построенный индекс (опционально, для мгновенного поиска) -->
+    <script src="js/prebuilt-index.js"></script>
+    
+    <script src="js/api.js"></script>
+    <script src="js/search.js"></script>
+</body>
+</html>

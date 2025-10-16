@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест поиска - CineHub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: white;
+        }
+        
+        .test-container {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+        }
+        
+        input {
+            background: #0f3460;
+            color: white;
+            width: 300px;
+        }
+        
+        button {
+            background: #64b5f6;
+            color: white;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background: #42a5f5;
+        }
+        
+        .results {
+            background: #0f3460;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .movie-item {
+            background: #1a1a2e;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        
+        .console-output {
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Тест поиска фильмов</h1>
+    
+    <div class="test-container">
+        <h2>Быстрые тесты</h2>
+        <button onclick="testAPI()">Тест API</button>
+        <button onclick="testSearch('игра')">Поиск "игра"</button>
+        <button onclick="testSearch('кальмар')">Поиск "кальмар"</button>
+        <button onclick="testSearch('игра в кальмара')">Поиск "игра в кальмара"</button>
+        <button onclick="findSquidGame()">Найти Игру в кальмара</button>
+        <button onclick="checkMovieTitles(10)">Проверить названия фильмов</button>
+        <button onclick="checkPage(1)">Проверить страницу 1</button>
+        <button onclick="debugFirstMovies()">DEBUG: Первые фильмы</button>
+        <button onclick="checkCacheStatus()">Статус кэша</button>
+        <button onclick="clearDatabaseCache()">Очистить кэш БД</button>
+    </div>
+    
+    <div class="test-container">
+        <h2>Ручной поиск</h2>
+        <input type="text" id="searchInput" placeholder="Введите запрос для поиска..." value="игра в кальмара">
+        <button onclick="manualSearch()">Поиск</button>
+    </div>
+    
+    <div class="test-container">
+        <h2>Результаты</h2>
+        <div id="results" class="results">
+            Результаты поиска появятся здесь...
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <h2>Консоль</h2>
+        <div id="console" class="console-output">
+            Логи появятся здесь...
+        </div>
+    </div>
+
+    <!-- Подключаем API -->
+    <script src="js/api.js"></script>
+    
+    <script>
+        // Перехватываем console.log для отображения в интерфейсе
+        const consoleDiv = document.getElementById('console');
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        function addToConsole(message, type = 'log') {
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#f44336' : type === 'warn' ? '#ff9800' : '#4caf50';
+            consoleDiv.innerHTML += `<span style="color: ${color}">[${timestamp}] ${message}</span>\n`;
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsole(args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsole('ERROR: ' + args.join(' '), 'error');
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addToConsole('WARN: ' + args.join(' '), 'warn');
+        };
+        
+        // Функции тестирования
+        async function testAPI() {
+            console.log('🧪 Тестируем API...');
+            showResults('Тестируем API...');
+            
+            try {
+                const result = await movieAPI.getPageWithCache(1, 20, {});
+                console.log('API результат:', result);
+                
+                if (result && result.data && result.data.length > 0) {
+                    showResults(`✅ API работает! Получено ${result.data.length} фильмов`);
+                    console.log('Примеры фильмов:');
+                    result.data.slice(0, 5).forEach((movie, i) => {
+                        console.log(`${i+1}. ${movie.name_rus || movie.name || 'Без названия'}`);
+                    });
+                } else {
+                    showResults('❌ API не вернул данные');
+                }
+            } catch (error) {
+                console.error('Ошибка API:', error);
+                showResults('❌ Ошибка при тестировании API: ' + error.message);
+            }
+        }
+        
+        async function testSearch(query) {
+            console.log(`🔍 Тестируем поиск: "${query}"`);
+            showResults(`Ищем "${query}"...`);
+            
+            try {
+                const result = await movieAPI.searchMovies(query);
+                console.log('Результат поиска:', result);
+                
+                if (result && result.data) {
+                    const movies = result.data;
+                    showResults(`✅ Найдено ${movies.length} фильмов по запросу "${query}"`);
+                    
+                    if (movies.length > 0) {
+                        let html = `<h3>Найдено ${movies.length} фильмов:</h3>`;
+                        movies.slice(0, 10).forEach((movie, i) => {
+                            html += `<div class="movie-item">
+                                ${i+1}. <strong>${movie.name_rus || movie.name || 'Без названия'}</strong>
+                                ${movie.year ? ` (${movie.year})` : ''}
+                                ${movie.kp_rating ? ` - ⭐ ${movie.kp_rating}` : ''}
+                            </div>`;
+                        });
+                        showResults(html);
+                    }
+                } else {
+                    showResults('❌ Поиск не вернул результаты');
+                }
+            } catch (error) {
+                console.error('Ошибка поиска:', error);
+                showResults('❌ Ошибка при поиске: ' + error.message);
+            }
+        }
+        
+        async function checkPage(page) {
+            console.log(`📄 Проверяем страницу ${page}`);
+            showResults(`Проверяем страницу ${page}...`);
+            
+            try {
+                const result = await movieAPI.getPageWithCache(page, 20, {});
+                console.log(`Данные страницы ${page}:`, result);
+                
+                if (result && result.data) {
+                    showResults(`✅ Страница ${page} содержит ${result.data.length} фильмов`);
+                } else {
+                    showResults(`❌ Страница ${page} пустая или недоступна`);
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки страницы:', error);
+                showResults('❌ Ошибка при загрузке страницы: ' + error.message);
+            }
+        }
+        
+        async function manualSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                showResults('❌ Введите запрос для поиска');
+                return;
+            }
+            
+            await testSearch(query);
+        }
+        
+        async function checkMovieTitles(pages = 10) {
+            console.log(`📋 Проверяем названия фильмов на первых ${pages} страницах...`);
+            showResults(`📋 Проверяем названия фильмов на первых ${pages} страницах...`);
+            
+            const allTitles = [];
+            for (let page = 1; page <= pages; page++) {
+                try {
+                    const result = await movieAPI.getPageWithCache(page, 100, {});
+                    if (result && result.data) {
+                        result.data.forEach(movie => {
+                            const titles = [
+                                movie.name_rus,
+                                movie.name_eng,
+                                movie.name,
+                                movie.name_original
+                            ].filter(Boolean);
+                            
+                            allTitles.push({
+                                id: movie.id,
+                                titles: titles,
+                                mainTitle: movie.name_rus || movie.name || 'Без названия'
+                            });
+                        });
+                    }
+                } catch (error) {
+                    console.error(`Ошибка загрузки страницы ${page}:`, error);
+                }
+            }
+            
+            console.log(`📊 Найдено ${allTitles.length} фильмов`);
+            
+            // Ищем фильмы со словами "игра", "кальмар", "squid", "game"
+            const keywords = ['игра', 'кальмар', 'squid', 'game'];
+            let resultsHtml = `<h3>📊 Найдено ${allTitles.length} фильмов</h3>`;
+            
+            keywords.forEach(keyword => {
+                const matches = allTitles.filter(movie => 
+                    movie.titles.some(title => 
+                        title.toLowerCase().includes(keyword.toLowerCase())
+                    )
+                );
+                
+                console.log(`🔍 Фильмы с "${keyword}": ${matches.length}`);
+                resultsHtml += `<h4>🔍 Фильмы с "${keyword}": ${matches.length}</h4>`;
+                
+                matches.slice(0, 5).forEach(movie => {
+                    console.log(`  - ${movie.mainTitle}`);
+                    resultsHtml += `<div class="movie-item">- ${movie.mainTitle}</div>`;
+                });
+            });
+            
+            showResults(resultsHtml);
+            return allTitles;
+        }
+        
+        async function findSquidGame() {
+            console.log('🦑 Searching for "Squid Game" / "Игра в кальмара"...');
+            showResults('🦑 Ищем "Игру в кальмара" разными способами...');
+            
+            const queries = [
+                'игра в кальмара',
+                'squid game', 
+                'игра кальмара',
+                'кальмар',
+                'squid'
+            ];
+            
+            for (const query of queries) {
+                console.log(`🔍 Trying query: "${query}"`);
+                try {
+                    const result = await movieAPI.searchMovies(query);
+                    if (result && result.data && result.data.length > 0) {
+                        console.log(`✅ Found ${result.data.length} results for "${query}":`);
+                        result.data.slice(0, 3).forEach((movie, i) => {
+                            console.log(`${i+1}. ${movie.name_rus || movie.name || 'Без названия'}`);
+                        });
+                        
+                        // Проверяем, есть ли точное совпадение
+                        const exactMatch = result.data.find(movie => {
+                            const titles = [
+                                movie.name_rus,
+                                movie.name_eng, 
+                                movie.name,
+                                movie.name_original
+                            ].filter(Boolean).map(t => t.toLowerCase());
+                            
+                            return titles.some(title => 
+                                (title.includes('игра') && title.includes('кальмар')) ||
+                                (title.includes('squid') && title.includes('game'))
+                            );
+                        });
+                        
+                        if (exactMatch) {
+                            console.log(`🎯 FOUND SQUID GAME: ${exactMatch.name_rus || exactMatch.name}`);
+                            showResults(`🎯 НАЙДЕНА "ИГРА В КАЛЬМАРА"!<br><strong>${exactMatch.name_rus || exactMatch.name}</strong><br>Запрос: "${query}"`);
+                            return exactMatch;
+                        }
+                    } else {
+                        console.log(`❌ No results for "${query}"`);
+                    }
+                } catch (error) {
+                    console.error(`Error searching "${query}":`, error);
+                }
+            }
+            
+            console.log('❌ Squid Game not found with any query');
+            showResults('❌ "Игра в кальмара" не найдена ни одним из запросов');
+            return null;
+        }
+        
+        function showResults(html) {
+            document.getElementById('results').innerHTML = html;
+        }
+        
+        // Автоматический тест при загрузке
+        window.addEventListener('load', () => {
+            console.log('🚀 Страница загружена, начинаем тесты...');
+            setTimeout(() => {
+                testAPI();
+            }, 1000);
+        });
+        
+        // Обработка Enter в поле поиска
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                manualSearch();
+            }
+        });
+    </script>
+</body>
+</html>

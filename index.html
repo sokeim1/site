@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KINO HD PREMIUM - Лучший сайт для просмотра фильмов и сериалов онлайн в HD качестве</title>
+    <meta name="description" content="KINO HD PREMIUM - лучший сайт для просмотра фильмов и сериалов онлайн бесплатно в HD качестве. Огромная база фильмов 2025, 2024, 2023 года. Новинки кино каждый день! Смотрите без регистрации.">
+    <meta name="keywords" content="фильмы онлайн, сериалы онлайн, смотреть фильмы бесплатно, HD фильмы, новинки кино, фильмы 2025, лучший сайт для фильмов, кино онлайн">
+    <meta name="author" content="KINO HD PREMIUM">
+    
+    <!-- Open Graph для соцсетей -->
+    <meta property="og:title" content="KINO HD PREMIUM - Лучший сайт для просмотра кино онлайн">
+    <meta property="og:description" content="Огромная база фильмов и сериалов в HD качестве. Смотрите бесплатно без регистрации!">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="KINO HD PREMIUM">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="logo">
+                    <a href="index.html" style="text-decoration: none; color: inherit;">
+                        <h1>KINO HD PREMIUM</h1>
+                    </a>
+                </div>
+                <div class="nav-links">
+                    <div class="nav-dropdown">
+                        <a href="#" class="nav-link">Жанры <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-menu" id="genresDropdown">
+                            <div class="dropdown-loading">Загрузка жанров...</div>
+                        </div>
+                    </div>
+                    <a href="#" class="nav-link" onclick="showPopularMovies(); return false;">Популярные</a>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Поиск фильмов..." class="search-input">
+                    <button class="search-btn" onclick="searchMovies()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main">
+        <aside class="sidebar">
+            <div class="filter-section">
+                <h3>Годы</h3>
+                <ul class="filter-list">
+                    <li><a href="#" data-year="2025" onclick="filterByYear(2025); return false;">2025</a></li>
+                    <li><a href="#" data-year="2024" onclick="filterByYear(2024); return false;">2024</a></li>
+                    <li><a href="#" data-year="2023" onclick="filterByYear(2023); return false;">2023</a></li>
+                    <li><a href="#" data-year="2022" onclick="filterByYear(2022); return false;">2022</a></li>
+                    <li><a href="#" data-year="2021" onclick="filterByYear(2021); return false;">2021</a></li>
+                    <li><a href="#" data-year="2020" onclick="filterByYear(2020); return false;">2020</a></li>
+                    <li><a href="#" data-year="2019" onclick="filterByYear(2019); return false;">2019</a></li>
+                    <li><a href="#" data-year="2018" onclick="filterByYear(2018); return false;">2018</a></li>
+                    <li><a href="#" data-year="2017" onclick="filterByYear(2017); return false;">2017</a></li>
+                    <li><a href="#" data-year="2016" onclick="filterByYear(2016); return false;">2016</a></li>
+                    <li><a href="#" data-year="2015" onclick="filterByYear(2015); return false;">2015</a></li>
+                </ul>
+            </div>
+        </aside>
+        
+        <div class="content">
+            <section class="hero">
+                <div class="hero-content">
+                    <h2>Полная база фильмов</h2>
+                    <p>Все фильмы и сериалы из нашей базы данных с постерами и описаниями</p>
+                </div>
+            </section>
+
+            <section class="filters">
+                <div class="filter-header">
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-category="all">Все фильмы</button>
+                        <button class="filter-tab" data-category="movie">Фильмы</button>
+                        <button class="filter-tab" data-category="serial">Сериалы</button>
+                        <button class="filter-tab" data-category="new">Новинки</button>
+                        <button class="filter-tab" data-category="popular" onclick="showPopularMovies()">Популярные</button>
+                    </div>
+                    <div class="movies-counter">
+                        <span id="moviesCounter">Загружаем...</span>
+                        <div class="search-controls">
+                            <button class="control-btn" onclick="getSearchStats()" title="Статистика поиска">
+                                📊
+                            </button>
+                            <button class="control-btn" onclick="clearSearchCache()" title="Очистить кэш">
+                                🧹
+                            </button>
+                            <button class="control-btn" onclick="stopIndexBuilding()" title="Остановить построение индекса">
+                                ⏹️
+                            </button>
+                            <button class="control-btn" onclick="testSearchAPI()" title="Тестировать API и поиск">
+                                🧪
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="movies-section">
+                <div class="movies-grid" id="moviesGrid">
+                    <!-- Фильмы будут загружены через JavaScript -->
+                </div>
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Загрузка фильмов...</p>
+                </div>
+                <div class="load-more-container">
+                    <button class="load-more-btn" id="loadMoreBtn" onclick="loadMoreMovies()">
+                        Загрузить ещё
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>KINO HD PREMIUM</h3>
+                    <p>Ваш путеводитель в мире кино</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Навигация</h4>
+                    <ul>
+                        <li><a href="index.html">Главная</a></li>
+                        <li><a href="#">Жанры</a></li>
+                        <li><a href="#">Топ фильмы</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="#">О проекте</a></li>
+                        <li><a href="#">Контакты</a></li>
+                        <li><a href="#">Политика конфиденциальности</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 KINO HD PREMIUM. Все права защищены. | Создано sokeim</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Предварительно построенный индекс (опционально, для мгновенного поиска) -->
+    <script src="js/prebuilt-index.js"></script>
+    
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

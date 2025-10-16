@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Sitemap: https://your-site.netlify.app/sitemap.xml
+
+# Разрешаем индексацию всех страниц
+Allow: /index.html
+Allow: /movie-details.html
+Allow: /search.html

@@ -1,0 +1,22 @@
+# Большие файлы индекса (не нужны в репозитории)
+movies-index.json
+movies-index-minified.json
+
+# Node modules
+node_modules/
+
+# Логи
+*.log
+npm-debug.log*
+
+# OS файлы
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Временные файлы
+*.tmp
+*.temp

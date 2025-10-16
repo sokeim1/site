@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineHub - Тест встроенного плеера</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/details.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="logo">
+                    <h1>CineHub</h1>
+                    <span class="author-info">by sokeim</span>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">Главная</a>
+                    <a href="search.html" class="nav-link">Поиск</a>
+                    <a href="#" class="nav-link">Жанры</a>
+                    <a href="#" class="nav-link">Топ фильмы</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main">
+        <div class="movie-details">
+            <!-- Movie hero section -->
+            <section class="movie-hero">
+                <div class="movie-backdrop">
+                    <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Тестовый фильм">
+                    <div class="backdrop-overlay"></div>
+                </div>
+                
+                <div class="container">
+                    <div class="movie-hero-content">
+                        <div class="movie-poster-large">
+                            <img src="https://via.placeholder.com/300x450/1a1a2e/64b5f6?text=Тестовый+Фильм" alt="Тестовый фильм">
+                        </div>
+                        
+                        <div class="movie-info-main">
+                            <h1 class="movie-title-large">Тестовый фильм</h1>
+                            <p class="movie-original-title">Test Movie</p>
+                            
+                            <div class="movie-meta">
+                                <span class="meta-item">2024</span>
+                                <span class="meta-item">120 мин</span>
+                                <span class="meta-item">Фильм</span>
+                                <span class="meta-item quality-badge">HD</span>
+                            </div>
+                            
+                            <div class="movie-ratings">
+                                <div class="rating-item">
+                                    <i class="fas fa-star"></i>
+                                    <span class="rating-value">8.5</span>
+                                    <span class="rating-source">КиноПоиск</span>
+                                </div>
+                                <div class="rating-item">
+                                    <i class="fas fa-star"></i>
+                                    <span class="rating-value">7.8</span>
+                                    <span class="rating-source">IMDb</span>
+                                </div>
+                            </div>
+                            
+                            <div class="movie-genres">
+                                <span class="genre-tag">Драма</span>
+                                <span class="genre-tag">Триллер</span>
+                                <span class="genre-tag">Криминал</span>
+                            </div>
+                            
+                            <div class="movie-countries">
+                                <span class="country-tag">США</span>
+                                <span class="country-tag">Великобритания</span>
+                            </div>
+                            
+                            <p class="movie-description">
+                                Это тестовый фильм для демонстрации встроенного видеоплеера. 
+                                Плеер теперь встраивается прямо на страницу фильма, а не открывается в отдельном модальном окне.
+                            </p>
+                            
+                            <div class="movie-actions">
+                                <button class="watch-btn" onclick="openTestPlayer()">
+                                    <i class="fas fa-play"></i>
+                                    Смотреть
+                                </button>
+                                <button class="favorite-btn">
+                                    <i class="far fa-heart"></i>
+                                </button>
+                                <button class="share-btn">
+                                    <i class="fas fa-share"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Video player section -->
+            <section class="video-player-section" id="videoPlayerSection" style="display: none;">
+                <div class="container">
+                    <div class="video-player-header">
+                        <h3>Просмотр фильма</h3>
+                        <button class="close-player-btn" onclick="closeTestPlayer()">
+                            <i class="fas fa-times"></i>
+                            Закрыть плеер
+                        </button>
+                    </div>
+                    <div class="embedded-video-container">
+                        <iframe id="embeddedVideoFrame" src="" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Additional info section -->
+            <section class="movie-additional-info">
+                <div class="container">
+                    <div class="info-tabs">
+                        <button class="info-tab active">Детали</button>
+                    </div>
+                    
+                    <div class="tab-content">
+                        <div class="tab-pane active">
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <h4>Год выпуска</h4>
+                                    <p>2024</p>
+                                </div>
+                                <div class="detail-item">
+                                    <h4>Страна</h4>
+                                    <p>США, Великобритания</p>
+                                </div>
+                                <div class="detail-item">
+                                    <h4>Жанр</h4>
+                                    <p>Драма, Триллер, Криминал</p>
+                                </div>
+                                <div class="detail-item">
+                                    <h4>Длительность</h4>
+                                    <p>120 мин</p>
+                                </div>
+                            </div>
+                            
+                            <div class="full-description">
+                                <h4>Описание</h4>
+                                <p>
+                                    Это демонстрационная страница для тестирования встроенного видеоплеера. 
+                                    Теперь при нажатии на кнопку "Смотреть" плеер появляется прямо на странице фильма 
+                                    с плавной анимацией, а не в отдельном модальном окне. Это обеспечивает более 
+                                    интегрированный пользовательский опыт.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>CineHub</h3>
+                    <p>Ваш путеводитель в мире кино</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 CineHub. Все права защищены. | Создано sokeim</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const videoPlayerSection = document.getElementById('videoPlayerSection');
+        const embeddedVideoFrame = document.getElementById('embeddedVideoFrame');
+
+        function openTestPlayer() {
+            // Используем тестовое видео с YouTube
+            const testVideoUrl = 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1';
+            
+            embeddedVideoFrame.src = testVideoUrl;
+            videoPlayerSection.style.display = 'block';
+            
+            // Add show class for animation after a small delay
+            setTimeout(() => {
+                videoPlayerSection.classList.add('show');
+            }, 50);
+            
+            // Scroll to player
+            setTimeout(() => {
+                videoPlayerSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }, 100);
+        }
+
+        function closeTestPlayer() {
+            // Remove show class for animation
+            videoPlayerSection.classList.remove('show');
+            
+            // Wait for animation to complete before hiding
+            setTimeout(() => {
+                embeddedVideoFrame.src = '';
+                videoPlayerSection.style.display = 'none';
+            }, 500);
+            
+            // Scroll back to movie info
+            document.querySelector('.movie-hero').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }
+
+        // Close player on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && videoPlayerSection.style.display === 'block') {
+                closeTestPlayer();
+            }
+        });
+    </script>
+</body>
+</html>

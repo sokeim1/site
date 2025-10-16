@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KINO HD PREMIUM - Детали фильма</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/details.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="logo">
+                    <a href="index.html" style="text-decoration: none; color: inherit;">
+                        <h1>KINO HD PREMIUM</h1>
+                    </a>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html#genres" class="nav-link">Жанры</a>
+                    <a href="index.html#popular" class="nav-link">Популярные</a>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Поиск фильмов..." class="search-input">
+                    <button class="search-btn" onclick="window.location.href='index.html?search=' + document.getElementById('searchInput').value">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main">
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Загрузка информации о фильме...</p>
+        </div>
+
+        <div class="movie-details" id="movieDetails" style="display: none;">
+            <!-- Movie hero section -->
+            <section class="movie-hero">
+                <div class="movie-backdrop">
+                    <img id="backdropImage" src="" alt="">
+                    <div class="backdrop-overlay"></div>
+                </div>
+                
+                <div class="container">
+                    <div class="movie-hero-content">
+                        <div class="movie-poster-large">
+                            <img id="posterImage" src="" alt="">
+                        </div>
+                        
+                        <div class="movie-info-main">
+                            <h1 id="movieTitle" class="movie-title-large"></h1>
+                            <p id="movieOriginalTitle" class="movie-original-title"></p>
+                            
+                            <div class="movie-meta">
+                                <span id="movieYear" class="meta-item"></span>
+                                <span id="movieDuration" class="meta-item"></span>
+                                <span id="movieType" class="meta-item"></span>
+                                <span id="movieQuality" class="meta-item quality-badge"></span>
+                            </div>
+                            
+                            <div class="movie-ratings">
+                                <div id="kpRating" class="rating-item" style="display: none;">
+                                    <i class="fas fa-star"></i>
+                                    <span class="rating-value"></span>
+                                    <span class="rating-source">КиноПоиск</span>
+                                </div>
+                                <div id="imdbRating" class="rating-item" style="display: none;">
+                                    <i class="fas fa-star"></i>
+                                    <span class="rating-value"></span>
+                                    <span class="rating-source">IMDb</span>
+                                </div>
+                            </div>
+                            
+                            <div id="movieGenres" class="movie-genres"></div>
+                            <div id="movieCountries" class="movie-countries"></div>
+                            
+                            <p id="movieDescription" class="movie-description"></p>
+                            
+                            <!-- Action buttons removed -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Video player section -->
+            <section class="video-player-section" id="videoPlayerSection">
+                <div class="container">
+                    <div class="video-player-header">
+                        <h3>Просмотр фильма</h3>
+                        <!-- Fullscreen button removed -->
+                    </div>
+                    <div class="embedded-video-container">
+                        <div class="player-placeholder" id="playerPlaceholder">
+                            <div class="placeholder-content">
+                                <i class="fas fa-film fa-3x"></i>
+                                <h4>Подготовка плеера...</h4>
+                            </div>
+                        </div>
+                        <iframe id="embeddedVideoFrame" src="" frameborder="0" allowfullscreen allow="autoplay; fullscreen; picture-in-picture" style="display: none;"></iframe>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Additional info section removed for cleaner design -->
+
+        </div>
+
+        <div class="error-message" id="errorMessage" style="display: none;">
+            <div class="container">
+                <div class="error-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h2>Фильм не найден</h2>
+                    <p>К сожалению, информация о данном фильме недоступна.</p>
+                    <a href="index.html" class="back-btn">Вернуться на главную</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer removed for cleaner design -->
+
+    <script src="js/api.js"></script>
+    <script src="js/movie-details.js"></script>
+</body>
+</html>

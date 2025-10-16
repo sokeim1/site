@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отладка поиска - CineHub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f0f23;
+            color: white;
+            padding: 20px;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .search-section {
+            background: #1a1a2e;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            background: #2a2a3e;
+            color: white;
+            margin-bottom: 10px;
+        }
+        
+        .search-btn {
+            background: #64b5f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .debug-info {
+            background: #2a2a3e;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .movie-card {
+            background: #1a1a2e;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .movie-poster {
+            width: 100%;
+            height: 300px;
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+        
+        .movie-info {
+            padding: 15px;
+        }
+        
+        .movie-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .movie-year {
+            color: #888;
+            font-size: 14px;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        
+        .status.loading {
+            background: #ffa726;
+            color: black;
+        }
+        
+        .status.success {
+            background: #4caf50;
+        }
+        
+        .status.error {
+            background: #f44336;
+        }
+        
+        .status.info {
+            background: #2196f3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Отладка поиска CineHub</h1>
+        
+        <div class="search-section">
+            <h2>Тестирование поиска</h2>
+            <input type="text" id="searchInput" class="search-input" placeholder="Введите поисковый запрос (например: игра в кальмара)" value="игра в кальмара">
+            <button onclick="debugSearch()" class="search-btn">🔍 Отладить поиск</button>
+            <button onclick="testDirectAPI()" class="search-btn">🧪 Тест прямого API</button>
+            <button onclick="clearLogs()" class="search-btn">🧹 Очистить логи</button>
+        </div>
+        
+        <div id="status" class="status info">Готов к тестированию</div>
+        
+        <div class="debug-info" id="debugLogs">Логи отладки появятся здесь...</div>
+        
+        <div id="resultsContainer">
+            <h3>Результаты поиска:</h3>
+            <div id="resultsGrid" class="results-grid"></div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        let debugLogs = [];
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            debugLogs.push(logEntry);
+            
+            const debugElement = document.getElementById('debugLogs');
+            debugElement.textContent = debugLogs.join('\n');
+            debugElement.scrollTop = debugElement.scrollHeight;
+            
+            console.log(message);
+        }
+        
+        function setStatus(message, type = 'info') {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = message;
+            statusElement.className = `status ${type}`;
+        }
+        
+        function clearLogs() {
+            debugLogs = [];
+            document.getElementById('debugLogs').textContent = 'Логи очищены...';
+            document.getElementById('resultsGrid').innerHTML = '';
+        }
+        
+        async function debugSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            
+            if (!query) {
+                setStatus('Введите поисковый запрос', 'error');
+                return;
+            }
+            
+            log(`🔍 НАЧАЛО ОТЛАДКИ ПОИСКА: "${query}"`);
+            setStatus(`Поиск "${query}"...`, 'loading');
+            
+            try {
+                // Тест 1: Проверяем базовое подключение к API
+                log('📡 Тест 1: Проверка подключения к API...');
+                const testResponse = await fetch('https://vibix.org/api/v1/publisher/videos/links?page=1&limit=5', {
+                    headers: {
+                        'Authorization': 'Bearer K5S0n92g87qeScnSrtqxOEpx4SswFFPV1sv5C68465469908',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (testResponse.ok) {
+                    const testData = await testResponse.json();
+                    log(`✅ API подключение успешно. Получено ${testData.data?.length || 0} фильмов`);
+                } else {
+                    log(`❌ Ошибка API: ${testResponse.status}`);
+                }
+                
+                // Тест 2: Используем функцию поиска из movieAPI
+                log('🔍 Тест 2: Использование movieAPI.searchMovies...');
+                const searchResult = await movieAPI.searchMovies(query, { limit: 20 });
+                
+                log(`📊 Результат поиска:`, 'info');
+                log(`- Найдено фильмов: ${searchResult?.data?.length || 0}`);
+                log(`- Метаданные: ${JSON.stringify(searchResult?.meta, null, 2)}`);
+                
+                if (searchResult?.data && Array.isArray(searchResult.data)) {
+                    log(`📋 Первые 3 результата:`);
+                    searchResult.data.slice(0, 3).forEach((movie, index) => {
+                        log(`${index + 1}. ${movie.name_rus || movie.name_eng || movie.name || 'Без названия'}`);
+                        log(`   ID: ${movie.id}, Год: ${movie.year}, Тип: ${movie.type}`);
+                    });
+                    
+                    // Отображаем результаты
+                    displayResults(searchResult.data);
+                    setStatus(`Найдено ${searchResult.data.length} фильмов`, 'success');
+                } else {
+                    log('❌ Некорректный формат ответа от API');
+                    setStatus('Некорректный ответ API', 'error');
+                }
+                
+                // Тест 3: Проверяем фильтрацию
+                log('🧪 Тест 3: Проверка фильтрации...');
+                
+                // Получаем несколько страниц для тестирования фильтрации
+                const testPages = await Promise.all([
+                    movieAPI.getMoviesList({ page: 1, limit: 50 }),
+                    movieAPI.getMoviesList({ page: 2, limit: 50 })
+                ]);
+                
+                const allTestMovies = [];
+                testPages.forEach(page => {
+                    if (page?.data) {
+                        allTestMovies.push(...page.data);
+                    }
+                });
+                
+                log(`📚 Загружено ${allTestMovies.length} фильмов для тестирования фильтрации`);
+                
+                // Тестируем фильтрацию
+                const filteredResults = movieAPI.filterMoviesByQuery(allTestMovies, query);
+                log(`🎯 Результат фильтрации: ${filteredResults.length} фильмов`);
+                
+                if (filteredResults.length > 0) {
+                    log(`🎬 Найденные фильмы через фильтрацию:`);
+                    filteredResults.slice(0, 5).forEach((movie, index) => {
+                        log(`${index + 1}. ${movie.name_rus || movie.name_eng || movie.name || 'Без названия'}`);
+                    });
+                }
+                
+            } catch (error) {
+                log(`❌ ОШИБКА: ${error.message}`);
+                log(`❌ Стек ошибки: ${error.stack}`);
+                setStatus(`Ошибка: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testDirectAPI() {
+            const query = document.getElementById('searchInput').value.trim();
+            
+            log(`🧪 ТЕСТ ПРЯМОГО API: "${query}"`);
+            setStatus('Тестирование прямого API...', 'loading');
+            
+            const endpoints = [
+                `/publisher/videos/links?search=${encodeURIComponent(query)}`,
+                `/publisher/videos/links?q=${encodeURIComponent(query)}`,
+                `/publisher/videos/links?name=${encodeURIComponent(query)}`,
+                `/publisher/videos/search?q=${encodeURIComponent(query)}`
+            ];
+            
+            for (const endpoint of endpoints) {
+                try {
+                    log(`🔍 Тестирование: ${endpoint}`);
+                    
+                    const response = await fetch(`https://vibix.org/api/v1${endpoint}`, {
+                        headers: {
+                            'Authorization': 'Bearer K5S0n92g87qeScnSrtqxOEpx4SswFFPV1sv5C68465469908',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        log(`✅ Успешно: ${data.data?.length || 0} результатов`);
+                        
+                        if (data.data && data.data.length > 0) {
+                            log(`📋 Первые результаты:`);
+                            data.data.slice(0, 3).forEach((movie, index) => {
+                                log(`${index + 1}. ${movie.name_rus || movie.name_eng || movie.name || 'Без названия'}`);
+                            });
+                        }
+                    } else {
+                        log(`❌ Ошибка ${response.status}: ${response.statusText}`);
+                    }
+                } catch (error) {
+                    log(`❌ Исключение: ${error.message}`);
+                }
+            }
+            
+            setStatus('Тест прямого API завершен', 'info');
+        }
+        
+        function displayResults(movies) {
+            const grid = document.getElementById('resultsGrid');
+            grid.innerHTML = '';
+            
+            if (!movies || movies.length === 0) {
+                grid.innerHTML = '<div style="color: #888;">Нет результатов для отображения</div>';
+                return;
+            }
+            
+            movies.slice(0, 20).forEach(movie => {
+                const card = document.createElement('div');
+                card.className = 'movie-card';
+                
+                const title = movie.name_rus || movie.name_eng || movie.name || 'Без названия';
+                const year = movie.year || 'Неизвестно';
+                const type = movie.type === 'movie' ? 'Фильм' : 'Сериал';
+                
+                card.innerHTML = `
+                    <div class="movie-poster">
+                        ${movie.poster_url ? `<img src="${movie.poster_url}" alt="${title}" style="width: 100%; height: 100%; object-fit: cover;">` : 'Нет постера'}
+                    </div>
+                    <div class="movie-info">
+                        <div class="movie-title">${title}</div>
+                        <div class="movie-year">${year} • ${type}</div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+        
+        // Автоматический тест при загрузке страницы
+        window.addEventListener('DOMContentLoaded', () => {
+            log('🚀 Страница отладки загружена');
+            log('📊 Статистика movieAPI:', 'info');
+            const stats = movieAPI.getSearchStats();
+            log(`- Размер индекса: ${stats.indexSize}`);
+            log(`- Размер кэша: ${stats.cacheSize}`);
+            log(`- Всего поисков: ${stats.totalSearches}`);
+        });
+    </script>
+</body>
+</html>
