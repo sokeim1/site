@@ -1,0 +1,163 @@
+<!-- 
+    ГОТОВЫЕ КОДЫ АНАЛИТИКИ ДЛЯ ВСТАВКИ В <head>
+    
+    ИНСТРУКЦИЯ:
+    1. Зарегистрируйтесь в Google Analytics и Яндекс.Метрике
+    2. Получите свои ID
+    3. Замените G-XXXXXXXXXX и XXXXXXXX на ваши ID
+    4. Скопируйте весь блок ниже
+    5. Вставьте ПЕРЕД закрывающим </head> в:
+       - index.html
+       - movie-details.html
+       - search.html (если есть)
+-->
+
+<!-- ========== GOOGLE ANALYTICS ========== -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  
+  // Основная конфигурация
+  gtag('config', 'G-XXXXXXXXXX', {
+    'send_page_view': true,
+    'anonymize_ip': true // Анонимизация IP для GDPR
+  });
+  
+  // Отслеживание событий
+  window.trackEvent = function(category, action, label, value) {
+    gtag('event', action, {
+      'event_category': category,
+      'event_label': label,
+      'value': value
+    });
+  };
+</script>
+
+<!-- ========== ЯНДЕКС.МЕТРИКА ========== -->
+<script type="text/javascript">
+   (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+   m[i].l=1*new Date();
+   for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+   k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+   ym(XXXXXXXX, "init", {
+        clickmap:true,           // Карта кликов
+        trackLinks:true,         // Отслеживание внешних ссылок
+        accurateTrackBounce:true,// Точный показатель отказов
+        webvisor:true,           // Вебвизор (запись сессий)
+        trackHash:true           // Отслеживание хэша в URL
+   });
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/XXXXXXXX" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+
+<!-- ========== ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ ========== -->
+<script>
+// Отслеживание клика на фильм
+function trackMovieClick(movieTitle, movieId) {
+    // Google Analytics
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'movie_click', {
+            'movie_title': movieTitle,
+            'movie_id': movieId
+        });
+    }
+    
+    // Яндекс.Метрика
+    if (typeof ym !== 'undefined') {
+        ym(XXXXXXXX, 'reachGoal', 'movie_click', {
+            title: movieTitle,
+            id: movieId
+        });
+    }
+    
+    console.log('📊 Tracked movie click:', movieTitle);
+}
+
+// Отслеживание поиска
+function trackSearch(query, resultsCount) {
+    // Google Analytics
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'search', {
+            'search_term': query,
+            'results_count': resultsCount
+        });
+    }
+    
+    // Яндекс.Метрика
+    if (typeof ym !== 'undefined') {
+        ym(XXXXXXXX, 'reachGoal', 'search', {
+            query: query,
+            results: resultsCount
+        });
+    }
+    
+    console.log('📊 Tracked search:', query, 'Results:', resultsCount);
+}
+
+// Отслеживание воспроизведения видео
+function trackVideoPlay(movieTitle, movieId) {
+    // Google Analytics
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'video_play', {
+            'movie_title': movieTitle,
+            'movie_id': movieId
+        });
+    }
+    
+    // Яндекс.Метрика
+    if (typeof ym !== 'undefined') {
+        ym(XXXXXXXX, 'reachGoal', 'video_play', {
+            title: movieTitle,
+            id: movieId
+        });
+    }
+    
+    console.log('📊 Tracked video play:', movieTitle);
+}
+
+// Отслеживание времени на странице
+let startTime = Date.now();
+window.addEventListener('beforeunload', function() {
+    let timeSpent = Math.round((Date.now() - startTime) / 1000); // в секундах
+    
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'timing_complete', {
+            'name': 'page_view',
+            'value': timeSpent,
+            'event_category': 'engagement'
+        });
+    }
+});
+
+// Отслеживание ошибок
+window.addEventListener('error', function(e) {
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'exception', {
+            'description': e.message,
+            'fatal': false
+        });
+    }
+});
+
+console.log('📊 Analytics initialized!');
+</script>
+
+<!-- 
+    ПРИМЕРЫ ИСПОЛЬЗОВАНИЯ В ВАШЕМ КОДЕ:
+    
+    1. При клике на фильм:
+       trackMovieClick('Интерстеллар', 12345);
+    
+    2. При поиске:
+       trackSearch('боевики 2024', 15);
+    
+    3. При воспроизведении:
+       trackVideoPlay('Интерстеллар', 12345);
+    
+    4. Кастомное событие:
+       gtag('event', 'custom_event', {'param': 'value'});
+       ym(XXXXXXXX, 'reachGoal', 'custom_goal');
+-->
