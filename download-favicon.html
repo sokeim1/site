@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Download Favicon</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #111;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .container {
+            background: #222;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        canvas {
+            border: 2px solid #444;
+            margin: 20px 0;
+        }
+        button {
+            background: #e50914;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background: #f40612;
+        }
+        img {
+            max-width: 360px;
+            border: 2px solid #444;
+            border-radius: 10px;
+        }
+        .info {
+            background: rgba(229, 9, 20, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Создание Favicon для KINO HD PREMIUM</h1>
+        
+        <div class="info">
+            <p><strong>Инструкция:</strong></p>
+            <p>1. Изображение загружено ниже</p>
+            <p>2. Нажмите кнопки для скачивания разных размеров</p>
+            <p>3. Сохраните файлы в корень проекта</p>
+        </div>
+
+        <img id="sourceImage" crossorigin="anonymous" src="https://static.wikia.nocookie.net/disney/images/2/28/Profile_-_Jack_Sparrow.png/revision/latest?cb=20190814020525" alt="Jack Sparrow">
+        
+        <div>
+            <h3>Favicon 32x32 (для браузера)</h3>
+            <canvas id="canvas32" width="32" height="32"></canvas>
+            <br>
+            <button onclick="downloadFavicon(32, 'favicon-32x32.png')">Скачать favicon-32x32.png</button>
+        </div>
+
+        <div>
+            <h3>Favicon 192x192 (для Android)</h3>
+            <canvas id="canvas192" width="192" height="192"></canvas>
+            <br>
+            <button onclick="downloadFavicon(192, 'favicon-192x192.png')">Скачать favicon-192x192.png</button>
+        </div>
+
+        <div>
+            <h3>Apple Touch Icon 180x180 (для iOS)</h3>
+            <canvas id="canvas180" width="180" height="180"></canvas>
+            <br>
+            <button onclick="downloadFavicon(180, 'apple-touch-icon.png')">Скачать apple-touch-icon.png</button>
+        </div>
+
+        <div>
+            <h3>Favicon ICO 16x16 (старые браузеры)</h3>
+            <canvas id="canvas16" width="16" height="16"></canvas>
+            <br>
+            <button onclick="downloadFavicon(16, 'favicon-16x16.png')">Скачать favicon-16x16.png</button>
+        </div>
+
+        <div class="info" style="margin-top: 30px;">
+            <p><strong>После скачивания:</strong></p>
+            <p>Переместите все файлы в корень проекта и выполните:</p>
+            <code style="background: #000; padding: 5px 10px; border-radius: 3px; display: block; margin: 10px 0;">
+                git add favicon*.png apple-touch-icon.png<br>
+                git commit -m "Add Jack Sparrow favicon"<br>
+                git push
+            </code>
+        </div>
+    </div>
+
+    <script>
+        const img = document.getElementById('sourceImage');
+        
+        img.onload = function() {
+            drawFavicon(32);
+            drawFavicon(192);
+            drawFavicon(180);
+            drawFavicon(16);
+        };
+
+        // Если изображение уже загружено
+        if (img.complete) {
+            img.onload();
+        }
+
+        function drawFavicon(size) {
+            const canvas = document.getElementById('canvas' + size);
+            const ctx = canvas.getContext('2d');
+            
+            // Очистка
+            ctx.clearRect(0, 0, size, size);
+            
+            // Рисуем изображение
+            ctx.drawImage(img, 0, 0, size, size);
+            
+            // Добавляем круглую рамку для красоты
+            ctx.strokeStyle = '#e50914';
+            ctx.lineWidth = Math.max(1, size / 32);
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2 - ctx.lineWidth, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        function downloadFavicon(size, filename) {
+            const canvas = document.getElementById('canvas' + size);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Автоматически перерисовываем при изменении изображения
+        img.onerror = function() {
+            alert('Не удалось загрузить изображение. Попробуйте скачать его вручную и использовать локально.');
+        };
+    </script>
+</body>
+</html>
