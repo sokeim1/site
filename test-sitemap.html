@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест Sitemap</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-item {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-item h3 {
+            margin-top: 0;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .status.loading {
+            background: #ffc107;
+            color: #000;
+        }
+        .status.success {
+            background: #4caf50;
+            color: white;
+        }
+        .status.error {
+            background: #f44336;
+            color: white;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Тест доступності Sitemap файлів</h1>
+    
+    <div id="tests"></div>
+
+    <script>
+        const sitemaps = [
+            {
+                name: 'Sitemap Index',
+                url: '/sitemap-index.xml'
+            },
+            {
+                name: 'Main Sitemap',
+                url: '/sitemap.xml'
+            },
+            {
+                name: 'Movies Sitemap 1',
+                url: '/sitemap-movies-1.xml'
+            },
+            {
+                name: 'Movies Sitemap 2',
+                url: '/sitemap-movies-2.xml'
+            },
+            {
+                name: 'Movies Sitemap 3',
+                url: '/sitemap-movies-3.xml'
+            },
+            {
+                name: 'Robots.txt',
+                url: '/robots.txt'
+            }
+        ];
+
+        const testsDiv = document.getElementById('tests');
+
+        async function testSitemap(sitemap) {
+            const testDiv = document.createElement('div');
+            testDiv.className = 'test-item';
+            testDiv.innerHTML = `
+                <h3>${sitemap.name}</h3>
+                <p>URL: <code>${sitemap.url}</code></p>
+                <p>Статус: <span class="status loading">Перевірка...</span></p>
+                <div class="headers"></div>
+            `;
+            testsDiv.appendChild(testDiv);
+
+            try {
+                const response = await fetch(sitemap.url);
+                const statusSpan = testDiv.querySelector('.status');
+                const headersDiv = testDiv.querySelector('.headers');
+
+                if (response.ok) {
+                    statusSpan.className = 'status success';
+                    statusSpan.textContent = `✓ ${response.status} OK`;
+
+                    // Показуємо важливі заголовки
+                    const headers = {
+                        'Content-Type': response.headers.get('content-type'),
+                        'Cache-Control': response.headers.get('cache-control'),
+                        'X-Robots-Tag': response.headers.get('x-robots-tag')
+                    };
+
+                    let headersHTML = '<h4>Заголовки:</h4><pre>';
+                    for (const [key, value] of Object.entries(headers)) {
+                        if (value) {
+                            headersHTML += `${key}: ${value}\n`;
+                        }
+                    }
+                    headersHTML += '</pre>';
+                    headersDiv.innerHTML = headersHTML;
+
+                    // Показуємо перші рядки контенту
+                    const text = await response.text();
+                    const preview = text.substring(0, 300);
+                    headersDiv.innerHTML += `<h4>Попередній перегляд:</h4><pre>${preview}...</pre>`;
+                } else {
+                    statusSpan.className = 'status error';
+                    statusSpan.textContent = `✗ ${response.status} ${response.statusText}`;
+                }
+            } catch (error) {
+                const statusSpan = testDiv.querySelector('.status');
+                statusSpan.className = 'status error';
+                statusSpan.textContent = `✗ Помилка: ${error.message}`;
+            }
+        }
+
+        // Запускаємо тести
+        sitemaps.forEach(sitemap => testSitemap(sitemap));
+    </script>
+</body>
+</html>
