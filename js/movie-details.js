@@ -414,6 +414,9 @@ async function displayMovieDetails(movie) {
     // Добавляем Open Graph для соцсетей
     updateOpenGraph(movieTitle, description, movie.poster_url);
     
+    // Добавляем Schema.org разметку для Google
+    updateSchemaOrg(movie);
+    
     // Details tab (optional - may not exist if removed from HTML)
     const detailYear = document.getElementById('detailYear');
     if (detailYear) detailYear.textContent = movie.year || 'Неизвестно';
@@ -810,6 +813,96 @@ function updateOpenGraph(title, description, imageUrl) {
         }
         meta.content = content;
     }
+}
+
+// Update Schema.org structured data for Google
+function updateSchemaOrg(movie) {
+    const title = movie.name_rus || movie.name_eng || movie.name || 'Фільм';
+    const description = movie.description || movie.description_short || 'Описание недоступно';
+    
+    // Создаем Schema.org разметку для фильма/сериала
+    const schemaData = {
+        "@context": "https://schema.org",
+        "@type": movie.type === 'serial' ? "TVSeries" : "Movie",
+        "name": title,
+        "alternateName": movie.name_original || movie.name_eng,
+        "description": description,
+        "image": movie.poster_url || movie.backdrop_url,
+        "url": window.location.href,
+        "dateCreated": movie.year ? `${movie.year}-01-01` : undefined,
+        "genre": movie.genre || [],
+        "countryOfOrigin": movie.country ? movie.country.map(c => ({
+            "@type": "Country",
+            "name": c
+        })) : undefined,
+        "contentRating": movie.age_rating || undefined,
+        "aggregateRating": {}
+    };
+    
+    // Добавляем рейтинги если есть
+    const ratings = [];
+    if (movie.kp_rating) {
+        const kpRating = parseFloat(movie.kp_rating);
+        if (kpRating > 0) {
+            ratings.push({
+                "@type": "Rating",
+                "ratingValue": kpRating,
+                "bestRating": 10,
+                "worstRating": 0,
+                "author": {
+                    "@type": "Organization",
+                    "name": "Кинопоиск"
+                }
+            });
+        }
+    }
+    
+    if (movie.imdb_rating) {
+        const imdbRating = parseFloat(movie.imdb_rating);
+        if (imdbRating > 0) {
+            ratings.push({
+                "@type": "Rating",
+                "ratingValue": imdbRating,
+                "bestRating": 10,
+                "worstRating": 0,
+                "author": {
+                    "@type": "Organization",
+                    "name": "IMDb"
+                }
+            });
+        }
+    }
+    
+    // Используем средний рейтинг для aggregateRating
+    if (ratings.length > 0) {
+        const avgRating = ratings.reduce((sum, r) => sum + r.ratingValue, 0) / ratings.length;
+        schemaData.aggregateRating = {
+            "@type": "AggregateRating",
+            "ratingValue": avgRating.toFixed(1),
+            "bestRating": 10,
+            "worstRating": 0,
+            "ratingCount": ratings.length
+        };
+    } else {
+        delete schemaData.aggregateRating;
+    }
+    
+    // Удаляем undefined значения
+    Object.keys(schemaData).forEach(key => {
+        if (schemaData[key] === undefined) {
+            delete schemaData[key];
+        }
+    });
+    
+    // Обновляем или создаем script tag с Schema.org
+    let schemaScript = document.getElementById('movieSchema');
+    if (!schemaScript) {
+        schemaScript = document.createElement('script');
+        schemaScript.id = 'movieSchema';
+        schemaScript.type = 'application/ld+json';
+        document.head.appendChild(schemaScript);
+    }
+    schemaScript.textContent = JSON.stringify(schemaData, null, 2);
 }
 
 // Global functions
