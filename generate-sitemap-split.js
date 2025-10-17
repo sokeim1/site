@@ -89,17 +89,38 @@ console.log('✅ sitemap.xml (головний) створено');
 chunks.forEach((chunk, index) => {
     const sitemapNumber = index + 1;
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< HEAD
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+=======
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+>>>>>>> b190e62 (Fix sitemap headers)
 `;
 
     chunk.forEach(movie => {
         const movieUrl = `${baseUrl}/movie-details.html?id=${movie.id}`;
+<<<<<<< HEAD
         const title = (movie.name_rus || movie.name || movie.title || 'Фільм')
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;');
+=======
+        
+        // Правильне екранування для XML
+        const escapeXml = (str) => {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&apos;')
+                .replace(/[\x00-\x1F\x7F]/g, ''); // Видаляємо контрольні символи
+        };
+        
+        const title = escapeXml(movie.name_rus || movie.name || movie.title || 'Фільм');
+>>>>>>> b190e62 (Fix sitemap headers)
         const poster = movie.poster_url || movie.poster || '';
         
         // Визначаємо пріоритет на основі рейтингу
@@ -114,6 +135,7 @@ chunks.forEach((chunk, index) => {
     <loc>${movieUrl}</loc>
     <changefreq>monthly</changefreq>
     <priority>${priority}</priority>
+<<<<<<< HEAD
     <lastmod>${currentDate}</lastmod>`;
         
         // Додаємо постер якщо є
@@ -126,6 +148,9 @@ chunks.forEach((chunk, index) => {
         }
         
         xml += `
+=======
+    <lastmod>${currentDate}</lastmod>
+>>>>>>> b190e62 (Fix sitemap headers)
   </url>
 `;
     });

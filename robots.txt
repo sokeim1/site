@@ -1,8 +1,4 @@
 User-agent: *
 Allow: /
-Sitemap: https://kinohdpremium.netlify.app/sitemap-index.xml
 
-# Разрешаем индексацию всех страниц
-Allow: /index.html
-Allow: /movie-details.html
-Allow: /search.html
+Sitemap: https://kinohd-premium.vercel.app/sitemap.xml
