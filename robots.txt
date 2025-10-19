@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kinohd-premium.vercel.app/sitemap.xml
+Sitemap: https://sokeim1.github.io/site/sitemap-index.xml
