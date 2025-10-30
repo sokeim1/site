@@ -51,7 +51,7 @@ console.log(`📊 Додаємо ${sortedMovies.length} фільмів`);
 
 // Генеруємо XML
 const currentDate = new Date().toISOString().split('T')[0];
-const baseUrl = 'https://kinohdpremium.netlify.app';
+const baseUrl = 'https://kinohd-premium.vercel.app';
 
 // Розбиваємо на частини по 5000 URL
 const URLS_PER_SITEMAP = 5000;
@@ -89,23 +89,11 @@ console.log('✅ sitemap.xml (головний) створено');
 chunks.forEach((chunk, index) => {
     const sitemapNumber = index + 1;
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<<<<<<< HEAD
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-=======
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
->>>>>>> b190e62 (Fix sitemap headers)
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 `;
 
     chunk.forEach(movie => {
         const movieUrl = `${baseUrl}/movie-details.html?id=${movie.id}`;
-<<<<<<< HEAD
-        const title = (movie.name_rus || movie.name || movie.title || 'Фільм')
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;');
-=======
         
         // Правильне екранування для XML
         const escapeXml = (str) => {
@@ -120,7 +108,6 @@ chunks.forEach((chunk, index) => {
         };
         
         const title = escapeXml(movie.name_rus || movie.name || movie.title || 'Фільм');
->>>>>>> b190e62 (Fix sitemap headers)
         const poster = movie.poster_url || movie.poster || '';
         
         // Визначаємо пріоритет на основі рейтингу
@@ -135,7 +122,6 @@ chunks.forEach((chunk, index) => {
     <loc>${movieUrl}</loc>
     <changefreq>monthly</changefreq>
     <priority>${priority}</priority>
-<<<<<<< HEAD
     <lastmod>${currentDate}</lastmod>`;
         
         // Додаємо постер якщо є
@@ -148,9 +134,6 @@ chunks.forEach((chunk, index) => {
         }
         
         xml += `
-=======
-    <lastmod>${currentDate}</lastmod>
->>>>>>> b190e62 (Fix sitemap headers)
   </url>
 `;
     });
@@ -195,4 +178,4 @@ console.log('\n🎉 Готово! Тепер:');
 console.log('1. Закомітьте зміни: git add sitemap*.xml');
 console.log('2. Запушьте: git push');
 console.log('3. Відправте в Google Search Console:');
-console.log('   https://kinohdpremium.netlify.app/sitemap-index.xml');
+console.log('   https://kinohd-premium.vercel.app/sitemap-index.xml');

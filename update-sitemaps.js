@@ -36,14 +36,16 @@ files.forEach(filename => {
         // Удаляем дублирующиеся заголовки xmlns после конфликтов
         content = content.replace(
             /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"\s+xmlns:image="http:\/\/www\.google\.com\/schemas\/sitemap-image\/1\.1">\s*<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/g,
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'
         );
         
-        // Исправляем если остался только один xmlns с image
-        content = content.replace(
-            /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"\s+xmlns:image="http:\/\/www\.google\.com\/schemas\/sitemap-image\/1\.1">/g,
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
-        );
+        // Добавляем xmlns:image к urlset без него, если в файле используются image: теги
+        if (content.includes('<image:image>') || content.includes('<image:loc>')) {
+            content = content.replace(
+                /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">(?!\s*xmlns:image)/g,
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'
+            );
+        }
         
         // Заменяем старый домен на новый
         const oldCount = (content.match(new RegExp(OLD_DOMAIN, 'g')) || []).length;
